@@ -12,9 +12,6 @@ class Task {
     var fk_user = 0
 
     @Column
-    var date_created = ""
-
-    @Column
     var resume = ""
 
     @Column
@@ -23,6 +20,4 @@ class Task {
     @Column
     var status = ""
 
-    @Column
-    var date_changed = ""
 }
