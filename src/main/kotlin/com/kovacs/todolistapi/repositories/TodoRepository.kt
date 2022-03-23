@@ -7,6 +7,5 @@ import org.springframework.data.jpa.repository.Query
 interface TodoRepository : JpaRepository <Task, Int> {
 
     @Query("SELECT t FROM Task t")
-    fun getTask(): List<Task>
-
+    fun getListTask(): List<Task>
 }

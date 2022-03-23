@@ -2,9 +2,7 @@ package com.kovacs.todolistapi.controllers
 
 import com.kovacs.todolistapi.repositories.TodoRepository
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 
 @RestController
@@ -13,7 +11,7 @@ class TodoController (private val todoRepository: TodoRepository){
 
     @GetMapping("/task/list")
     fun getListTask(): ResponseEntity<Any>{
-        val tasks = todoRepository.getTask()
+        val tasks = todoRepository.getListTask()
 
         return ResponseEntity.ok(tasks)
     }
