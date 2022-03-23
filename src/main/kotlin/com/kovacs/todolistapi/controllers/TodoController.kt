@@ -15,4 +15,13 @@ class TodoController (private val todoRepository: TodoRepository){
 
         return ResponseEntity.ok(tasks)
     }
+
+    @GetMapping("/task/{userid}/list")
+    fun getTaskById(
+        @PathVariable userid: Int
+    ):ResponseEntity<Any>{
+        val tasks = todoRepository.getTaskById(userid)
+
+        return ResponseEntity.ok(tasks)
+    }
 }
