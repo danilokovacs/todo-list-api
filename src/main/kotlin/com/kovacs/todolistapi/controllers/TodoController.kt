@@ -17,13 +17,13 @@ class TodoController (private val todoRepository: TodoRepository){
     fun getListTask(
         @RequestHeader token: String
     ): ResponseEntity<Any>{
-        if (validToken(token)){
-            return ResponseEntity
+        return if (validToken(token)){
+            val tasks = todoRepository.getListTask()
+            ResponseEntity.ok(tasks)
+        }else{
+            ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body("Acess Unathourized")
-        }else{
-            val tasks = todoRepository.getListTask()
-            return ResponseEntity.ok(tasks)
         }
     }
 
@@ -46,6 +46,6 @@ class TodoController (private val todoRepository: TodoRepository){
     }
 
     fun validToken(token: String): Boolean{
-        return token == "123"
+        return token == "secret"
     }
 }

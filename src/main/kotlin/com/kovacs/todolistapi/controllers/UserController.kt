@@ -3,6 +3,7 @@ package com.kovacs.todolistapi.controllers
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.kovacs.todolistapi.models.User
 import com.kovacs.todolistapi.repositories.UserRepository
+import org.apache.coyote.Response
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -24,5 +25,21 @@ class UserController (private val userRepository: UserRepository) {
         val user = userRepository.save(jacksonObjectMapper().readValue(json, User::class.java))
 
         return ResponseEntity.ok(json)
+    }
+
+    @PutMapping("/user/update/{id}")
+    fun putUser(
+        @PathVariable id: Int,
+        @RequestBody json: User
+    ):ResponseEntity<Any>{
+        val newUser = userRepository.findById(id).orElseThrow { RuntimeException("User not found with $id") }
+
+        newUser.id = json.id
+        newUser.email = json.email
+        newUser.name = json.name
+        newUser.password = json.password
+
+        userRepository.save(newUser)
+        return ResponseEntity.ok(newUser)
     }
 }
