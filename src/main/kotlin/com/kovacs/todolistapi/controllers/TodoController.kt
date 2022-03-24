@@ -7,6 +7,7 @@ import com.kovacs.todolistapi.repositories.TodoRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
 
 
 @RestController
@@ -44,6 +45,22 @@ class TodoController (private val todoRepository: TodoRepository){
 
         return ResponseEntity.ok(json)
     }
+
+    @PutMapping("/task/update/{id}")
+    fun putTask(
+        @PathVariable id: Int,
+        @RequestBody json: Task
+    ):ResponseEntity<Any>{
+        val updatedTask = todoRepository.findById(id).orElseThrow { RuntimeException("Task not found with $id") }
+
+        updatedTask.resume = json.resume
+        updatedTask.description = json.description
+        updatedTask.status = json.status
+
+        todoRepository.save(updatedTask)
+        return ResponseEntity.ok(updatedTask)
+    }
+
 
     fun validToken(token: String): Boolean{
         return token == "secret"
