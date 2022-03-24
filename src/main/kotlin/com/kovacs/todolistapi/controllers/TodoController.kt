@@ -61,6 +61,16 @@ class TodoController (private val todoRepository: TodoRepository){
         return ResponseEntity.ok(updatedTask)
     }
 
+    @DeleteMapping("/task/delete/{id}")
+    fun deleteTask(
+        @PathVariable id: Int
+    ):ResponseEntity<Any>{
+        val deletedTask = todoRepository.findById(id).orElseThrow { RuntimeException("Task not found with $id") }
+
+        todoRepository.delete(deletedTask)
+        return ResponseEntity.ok(deletedTask)
+    }
+
 
     fun validToken(token: String): Boolean{
         return token == "secret"
