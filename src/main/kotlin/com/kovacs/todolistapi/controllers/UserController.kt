@@ -42,4 +42,14 @@ class UserController (private val userRepository: UserRepository) {
         userRepository.save(newUser)
         return ResponseEntity.ok(newUser)
     }
+
+    @DeleteMapping("/user/delete/{id}")
+    fun deleteUser(
+        @PathVariable id: Int
+    ):ResponseEntity<Any>{
+        val deletedUser = userRepository.findById(id).orElseThrow { RuntimeException("User not found with $id") }
+
+        userRepository.delete(deletedUser)
+        return ResponseEntity.ok(deletedUser)
+    }
 }
