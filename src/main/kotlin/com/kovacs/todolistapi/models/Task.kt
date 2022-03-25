@@ -20,4 +20,6 @@ class Task {
     @Column
     var status = ""
 
+    @Column
+    var date_changed = ""
 }

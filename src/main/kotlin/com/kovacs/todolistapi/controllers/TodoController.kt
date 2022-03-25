@@ -1,13 +1,13 @@
 package com.kovacs.todolistapi.controllers
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.kovacs.todolistapi.models.Task
 import com.kovacs.todolistapi.repositories.TodoRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 @RestController
@@ -41,9 +41,15 @@ class TodoController (private val todoRepository: TodoRepository){
     fun setTaskById(
     @RequestBody json: String
     ):ResponseEntity<Any>{
-        val task = todoRepository.save(jacksonObjectMapper().readValue(json, Task::class.java))
+        val jsonBody = jacksonObjectMapper().readValue(json, Task::class.java)
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val date = formatter.format(LocalDateTime.now())
 
-        return ResponseEntity.ok(json)
+        jsonBody.date_changed = date
+
+        todoRepository.save(jsonBody)
+
+        return ResponseEntity.ok(jsonBody)
     }
 
     @PutMapping("/task/update/{id}")
@@ -52,12 +58,16 @@ class TodoController (private val todoRepository: TodoRepository){
         @RequestBody json: Task
     ):ResponseEntity<Any>{
         val updatedTask = todoRepository.findById(id).orElseThrow { RuntimeException("Task not found with $id") }
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val date = formatter.format(LocalDateTime.now())
 
         updatedTask.resume = json.resume
         updatedTask.description = json.description
         updatedTask.status = json.status
+        updatedTask.date_changed = date
 
         todoRepository.save(updatedTask)
+
         return ResponseEntity.ok(updatedTask)
     }
 
