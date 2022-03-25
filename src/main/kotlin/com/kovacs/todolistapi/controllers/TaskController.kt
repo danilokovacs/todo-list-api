@@ -2,7 +2,7 @@ package com.kovacs.todolistapi.controllers
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.kovacs.todolistapi.models.Task
-import com.kovacs.todolistapi.repositories.TodoRepository
+import com.kovacs.todolistapi.repositories.TaskRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -12,14 +12,14 @@ import java.time.format.DateTimeFormatter
 
 @RestController
 @RequestMapping("api")
-class TodoController (private val todoRepository: TodoRepository){
+class TaskController (private val taskRepository: TaskRepository){
 
     @GetMapping("/task/list")
     fun getListTask(
         @RequestHeader token: String
     ): ResponseEntity<Any>{
         return if (validToken(token)){
-            val tasks = todoRepository.getListTask()
+            val tasks = taskRepository.getListTask()
             ResponseEntity.ok(tasks)
         }else{
             ResponseEntity
@@ -32,7 +32,7 @@ class TodoController (private val todoRepository: TodoRepository){
     fun getTaskById(
         @PathVariable userid: Int
     ):ResponseEntity<Any>{
-        val tasks = todoRepository.getTaskById(userid)
+        val tasks = taskRepository.getTaskById(userid)
 
         return ResponseEntity.ok(tasks)
     }
@@ -47,7 +47,7 @@ class TodoController (private val todoRepository: TodoRepository){
 
         jsonBody.date_changed = date
 
-        todoRepository.save(jsonBody)
+        taskRepository.save(jsonBody)
 
         return ResponseEntity.ok(jsonBody)
     }
@@ -57,7 +57,7 @@ class TodoController (private val todoRepository: TodoRepository){
         @PathVariable id: Int,
         @RequestBody json: Task
     ):ResponseEntity<Any>{
-        val updatedTask = todoRepository.findById(id).orElseThrow { RuntimeException("Task not found with $id") }
+        val updatedTask = taskRepository.findById(id).orElseThrow { RuntimeException("Task not found with $id") }
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val date = formatter.format(LocalDateTime.now())
 
@@ -66,7 +66,7 @@ class TodoController (private val todoRepository: TodoRepository){
         updatedTask.status = json.status
         updatedTask.date_changed = date
 
-        todoRepository.save(updatedTask)
+        taskRepository.save(updatedTask)
 
         return ResponseEntity.ok(updatedTask)
     }
@@ -75,9 +75,9 @@ class TodoController (private val todoRepository: TodoRepository){
     fun deleteTask(
         @PathVariable id: Int
     ):ResponseEntity<Any>{
-        val deletedTask = todoRepository.findById(id).orElseThrow { RuntimeException("Task not found with $id") }
+        val deletedTask = taskRepository.findById(id).orElseThrow { RuntimeException("Task not found with $id") }
 
-        todoRepository.delete(deletedTask)
+        taskRepository.delete(deletedTask)
         return ResponseEntity.ok(deletedTask)
     }
 

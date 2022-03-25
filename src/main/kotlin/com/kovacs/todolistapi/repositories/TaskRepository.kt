@@ -4,7 +4,7 @@ import com.kovacs.todolistapi.models.Task
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
-interface TodoRepository : JpaRepository <Task, Int> {
+interface TaskRepository : JpaRepository <Task, Int> {
 
     @Query("SELECT t FROM Task t")
     fun getListTask(): List<Task>
