@@ -23,7 +23,7 @@ class TaskController (private val taskRepository: TaskRepository){
             ResponseEntity.ok(tasks)
         }else{
             ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
+                .status(401)
                 .body("Acess Unathourized")
         }
     }
@@ -33,6 +33,10 @@ class TaskController (private val taskRepository: TaskRepository){
         @PathVariable userid: Int
     ):ResponseEntity<Any>{
         val tasks = taskRepository.getTaskById(userid)
+
+        if (tasks.isEmpty()){
+            return ResponseEntity.status(404).body("Tasks not found with user id: $userid in database")
+        }
 
         return ResponseEntity.ok(tasks)
     }
@@ -47,9 +51,13 @@ class TaskController (private val taskRepository: TaskRepository){
 
         jsonBody.date_changed = date
 
-        taskRepository.save(jsonBody)
+        return try {
+            taskRepository.save(jsonBody)
+            ResponseEntity.status(201).body(jsonBody)
+        } catch (e: Exception){
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+        }
 
-        return ResponseEntity.ok(jsonBody)
     }
 
     @PutMapping("/task/update/{id}")
@@ -66,9 +74,13 @@ class TaskController (private val taskRepository: TaskRepository){
         updatedTask.status = json.status
         updatedTask.date_changed = date
 
-        taskRepository.save(updatedTask)
+        return try {
+            taskRepository.save(updatedTask)
+            ResponseEntity.ok(updatedTask)
+        } catch (e: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+        }
 
-        return ResponseEntity.ok(updatedTask)
     }
 
     @DeleteMapping("/task/delete/{id}")
@@ -77,10 +89,14 @@ class TaskController (private val taskRepository: TaskRepository){
     ):ResponseEntity<Any>{
         val deletedTask = taskRepository.findById(id).orElseThrow { RuntimeException("Task not found with $id") }
 
-        taskRepository.delete(deletedTask)
-        return ResponseEntity.ok(deletedTask)
-    }
+        return try {
+            taskRepository.delete(deletedTask)
+            ResponseEntity.ok(deletedTask)
+        } catch (e: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+        }
 
+    }
 
     fun validToken(token: String): Boolean{
         return token == "secret"

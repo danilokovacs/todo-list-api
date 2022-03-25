@@ -3,7 +3,6 @@ package com.kovacs.todolistapi.controllers
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.kovacs.todolistapi.models.User
 import com.kovacs.todolistapi.repositories.UserRepository
-import org.apache.coyote.Response
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
