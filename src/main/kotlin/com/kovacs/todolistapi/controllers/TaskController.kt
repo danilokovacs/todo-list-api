@@ -20,6 +20,11 @@ class TaskController (private val taskRepository: TaskRepository){
     ): ResponseEntity<Any>{
         return if (validToken(token)){
             val tasks = taskRepository.getListTask()
+
+            if (tasks.isEmpty()){
+               return ResponseEntity.status(404).body("List of tasks NOT FOUND")
+            }
+
             ResponseEntity.ok(tasks)
         }else{
             ResponseEntity
